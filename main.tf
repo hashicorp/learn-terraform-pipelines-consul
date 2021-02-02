@@ -35,12 +35,12 @@ data "terraform_remote_state" "cluster" {
 
 provider "kubernetes" {
   host                   = data.terraform_remote_state.cluster.outputs.host
-  cluster_ca_certificate = base64decode(data.terraform_remote_state.cluster.outputs.cluster_ca_certificate)
+  cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
 }
 
 provider "helm" {
   kubernetes {
     host                   = data.terraform_remote_state.cluster.outputs.host
-    cluster_ca_certificate = base64decode(data.terraform_remote_state.cluster.outputs.cluster_ca_certificate)
+    cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
   }
 }
