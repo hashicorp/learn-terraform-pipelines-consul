@@ -34,7 +34,6 @@ data "terraform_remote_state" "cluster" {
 
 
 provider "kubernetes" {
-  load_config_file       = "false"
   host                   = data.terraform_remote_state.cluster.outputs.host
   cluster_ca_certificate = base64decode(data.terraform_remote_state.cluster.outputs.cluster_ca_certificate)
 }
