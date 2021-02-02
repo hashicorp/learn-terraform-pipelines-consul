@@ -6,7 +6,21 @@ terraform {
       name = "firstName-lastInitial-consul"
     }
   }
+required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.0.1"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0.1"
+    }
 }
+
+required_version = "~> 0.14"
+}
+
+
 
 data "terraform_remote_state" "cluster" {
   backend = "remote"
@@ -19,7 +33,6 @@ data "terraform_remote_state" "cluster" {
 }
 
 provider "kubernetes" {
-  version = "~> 1.11"
 
   load_config_file       = false
   host                   = data.terraform_remote_state.cluster.outputs.host
@@ -29,7 +42,6 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version = "~> 1.0"
   kubernetes {
     load_config_file       = false
     host                   = data.terraform_remote_state.cluster.outputs.host
