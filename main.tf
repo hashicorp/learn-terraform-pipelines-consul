@@ -32,12 +32,8 @@ data "terraform_remote_state" "cluster" {
   }
 }
 
-data "google_container_cluster" "my_cluster" {
-}
 
 
-data "google_client_config" "default" {
-}
 
 provider "kubernetes" {
   host                   = data.terraform_remote_state.cluster.outputs.host
