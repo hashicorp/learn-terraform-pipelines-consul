@@ -1,6 +1,6 @@
 terraform {
   backend "remote" {
-    organization = "hashicorp-learn"
+    organization = "hashicorp-rachel"
 
     workspaces {
       name = "learn-terraform-pipelines-consul"
@@ -9,7 +9,7 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.0.1"
+      version = "~> 2.0.2"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
