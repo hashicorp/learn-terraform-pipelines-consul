@@ -33,8 +33,6 @@ data "terraform_remote_state" "cluster" {
 }
 
 data "google_container_cluster" "my_cluster" {
-  name     = "my-cluster"
-  location = "us-central1"
 }
 
 
@@ -42,18 +40,35 @@ data "google_client_config" "default" {
 }
 
 provider "kubernetes" {
-  host     = data.terraform_remote_state.cluster.outputs.host
-  username = data.terraform_remote_state.cluster.outputs.username
-  password = data.terraform_remote_state.cluster.outputs.password
+  host                   = data.terraform_remote_state.cluster.outputs.host
+  username               = data.terraform_remote_state.cluster.outputs.username
+  password               = data.terraform_remote_state.cluster.outputs.password
+  cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
 
-}
 
-
-provider "helm" {
-  kubernetes {
-    host     = data.terraform_remote_state.cluster.outputs.host
-    username = data.terraform_remote_state.cluster.outputs.username
-    password = data.terraform_remote_state.cluster.outputs.password
-
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    command     = "gcloud"
+    args = [
+      "auth application-default login"
+    ]
   }
 }
+provider "helm" {
+  kubernetes {
+    host                   = data.terraform_remote_state.cluster.outputs.host
+    username               = data.terraform_remote_state.cluster.outputs.username
+    password               = data.terraform_remote_state.cluster.outputs.password
+    cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
+
+
+    exec {
+      api_version = "client.authentication.k8s.io/v1alpha1"
+      command     = "gcloud"
+      args = [
+        "auth application-default login"
+      ]
+    }
+  }
+}
+
