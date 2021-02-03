@@ -36,8 +36,8 @@ data "terraform_remote_state" "cluster" {
 
 # Retrieve GKE cluster information
 provider "google" {
-  project = data.terraform_remote_state.cluster.outputs.project_id
-  region  = data.terraform_remote_state.cluster.outputs.region
+  project = data.terraform_remote_state.cluster.google_compute_zones.project
+  region  = data.terraform_remote_state.cluster.google_compute_zones.region
 }
 
 # Configure kubernetes provider with Oauth2 access token.
