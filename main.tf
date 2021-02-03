@@ -45,9 +45,7 @@ provider "kubernetes" {
   host     = data.terraform_remote_state.cluster.outputs.host
   username = data.terraform_remote_state.cluster.outputs.username
   password = data.terraform_remote_state.cluster.outputs.password
-  cluster_ca_certificate = base64decode(
-    data.terraform_remote_state.cluster.outputs.cluster_ca_certificate,
-  )
+
 }
 
 
@@ -56,8 +54,6 @@ provider "helm" {
     host     = data.terraform_remote_state.cluster.outputs.host
     username = data.terraform_remote_state.cluster.outputs.username
     password = data.terraform_remote_state.cluster.outputs.password
-    cluster_ca_certificate = base64decode(
-      data.terraform_remote_state.cluster.outputs.cluster_ca_certificate,
-    )
+
   }
 }
