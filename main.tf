@@ -42,14 +42,6 @@ provider "kubernetes" {
   cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
 
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    command     = "gcloud"
-    args = [
-      "auth application-default login"
-    ]
-  }
-}
 provider "helm" {
   kubernetes {
     host                   = data.terraform_remote_state.cluster.outputs.host
@@ -57,14 +49,6 @@ provider "helm" {
     password               = data.terraform_remote_state.cluster.outputs.password
     cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
 
-
-    exec {
-      api_version = "client.authentication.k8s.io/v1alpha1"
-      command     = "gcloud"
-      args = [
-        "auth application-default login"
-      ]
-    }
   }
 }
 
