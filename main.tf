@@ -6,7 +6,21 @@ terraform {
       name = "learn-terraform-pipelines-consul"
     }
   }
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.0.2"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0.2"
+    }
+  }
+
+  required_version = "~> 0.14"
 }
+
+
 
 data "terraform_remote_state" "cluster" {
   backend = "remote"
@@ -18,23 +32,27 @@ data "terraform_remote_state" "cluster" {
   }
 }
 
-provider "kubernetes" {
-  version = "~> 1.11"
 
-  load_config_file       = false
+# Retrieve GKE cluster information
+provider "google" {
+  project = data.terraform_remote_state.cluster.outputs.project_id
+  region  = data.terraform_remote_state.cluster.outputs.region
+}
+
+data "google_client_config" "default" {}
+
+provider "kubernetes" {
   host                   = data.terraform_remote_state.cluster.outputs.host
-  username               = data.terraform_remote_state.cluster.outputs.username
-  password               = data.terraform_remote_state.cluster.outputs.password
+  token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
+
 }
 
 provider "helm" {
-  version = "~> 1.0"
   kubernetes {
-    load_config_file       = false
     host                   = data.terraform_remote_state.cluster.outputs.host
-    username               = data.terraform_remote_state.cluster.outputs.username
-    password               = data.terraform_remote_state.cluster.outputs.password
+    token                  = data.google_client_config.default.access_token
     cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
+
   }
 }
