@@ -1,5 +1,5 @@
 resource "helm_release" "consul" {
-  count      = data.terraform_remote_state.cluster.outputs.enable_consul_and_vault ? 1 : 0
+  count      = data.terraform_remote_state.eks_cluster.outputs.enable_consul_and_vault ? 1 : 0
   depends_on = [kubernetes_namespace.secrets]
   name       = "${var.release_name}-consul"
   chart      = "${path.module}/consul-helm"
