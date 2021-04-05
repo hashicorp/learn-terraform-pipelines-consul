@@ -1,6 +1,6 @@
 terraform {
-  backend "remote" {
-    organization = "hashicorp-learn"
+  # backend "remote" {
+  #   organization = "hashicorp-learn"
 
     workspaces {
       name = "firstName-lastInitial-consul"
@@ -9,50 +9,62 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.0.2"
+      version = "2.1.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.0.2"
+      version = "2.0.3"
     }
   }
 
   required_version = "~> 0.14"
 }
 
+# data "terraform_remote_state" "eks_cluster" {
+#   backend = "remote"
+#   config = {
+#     organization = var.organization
+#     workspaces = {
+#       name = var.cluster_workspace
+#     }
+#   }
+# }
 
-
-data "terraform_remote_state" "cluster" {
-  backend = "remote"
+data "terraform_remote_state" "eks_cluster" {
+  backend = "local"
   config = {
-    organization = var.organization
-    workspaces = {
-      name = var.cluster_workspace
-    }
+    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
   }
 }
 
-
-# Retrieve GKE cluster information
-provider "google" {
-  project = data.terraform_remote_state.cluster.outputs.project_id
-  region  = data.terraform_remote_state.cluster.outputs.region
-}
-
-data "google_client_config" "default" {}
-
 provider "kubernetes" {
-  host                   = data.terraform_remote_state.cluster.outputs.host
-  token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
-
+  host                   = data.terraform_remote_state.eks_cluster.outputs.endpoint
+  cluster_ca_certificate = data.terraform_remote_state.eks_cluster.outputs.cluster_ca_certificate
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    command     = "aws"
+    args = [
+      "eks",
+      "get-token",
+      "--cluster-name",
+      data.terraform_remote_state.eks_cluster.outputs.cluster
+    ]
+  }
 }
 
 provider "helm" {
   kubernetes {
-    host                   = data.terraform_remote_state.cluster.outputs.host
-    token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
-
+    host                   = data.terraform_remote_state.eks_cluster.outputs.endpoint
+    cluster_ca_certificate = data.terraform_remote_state.eks_cluster.outputs.cluster_ca_certificate
+    exec {
+      api_version = "client.authentication.k8s.io/v1alpha1"
+      command     = "aws"
+      args = [
+        "eks",
+        "get-token",
+        "--cluster-name",
+        data.terraform_remote_state.eks_cluster.outputs.cluster
+      ]
+    }
   }
 }
