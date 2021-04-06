@@ -6,10 +6,6 @@ terraform {
   #   }
   # }
 
-  backend "local" {
-    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
-  }
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -28,10 +24,12 @@ terraform {
   required_version = "~> 0.14"
 }
 
-# data "terraform_remote_state" "eks_cluster" {
-# }
-
 data "terraform_remote_state" "eks_cluster" {
+  backend = "local"
+
+  config = {
+    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
+  }
 }
 
 provider "aws" {
