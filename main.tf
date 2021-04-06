@@ -1,11 +1,15 @@
 terraform {
   # backend "remote" {
-  #   organization = "hashicorp-learn"
+  #   organization = var.organization
+  #   workspaces = {
+  #     name = var.cluster_workspace
+  #   }
+  # }
 
-    workspaces {
-      name = "firstName-lastInitial-consul"
-    }
+  backend "local" {
+    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -25,20 +29,9 @@ terraform {
 }
 
 # data "terraform_remote_state" "eks_cluster" {
-#   backend = "remote"
-#   config = {
-#     organization = var.organization
-#     workspaces = {
-#       name = var.cluster_workspace
-#     }
-#   }
 # }
 
 data "terraform_remote_state" "eks_cluster" {
-  backend = "local"
-  config = {
-    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
-  }
 }
 
 provider "aws" {
