@@ -1,10 +1,11 @@
 terraform {
-  # backend "remote" {
-  #   organization = var.organization
-  #   workspaces = {
-  #     name = var.cluster_workspace
-  #   }
-  # }
+  backend "remote" {
+    organization = "infrastructure-pipelines-workshop"
+
+    workspaces {
+      name = "firstName-lastInitial-vault"
+    }
+  }
 
   required_providers {
     aws = {
@@ -25,10 +26,12 @@ terraform {
 }
 
 data "terraform_remote_state" "eks_cluster" {
-  backend = "local"
-
+  backend = "remote"
   config = {
-    path = "../learn-terraform-pipelines-k8s/terraform.tfstate"
+    organization = var.organization
+    workspaces = {
+      name = var.cluster_workspace
+    }
   }
 }
 
