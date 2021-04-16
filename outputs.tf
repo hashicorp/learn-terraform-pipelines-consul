@@ -1,7 +1,9 @@
 output "namespace" {
-  value = var.namespace
+  description = "Namespace containing the Consul Helm chart"
+  value       = var.namespace
 }
 
 output "release_name" {
-  value = var.release_name
+  description = "Helm Release name for Consul chart"
+  value       = var.release_name
 }
