@@ -36,7 +36,6 @@ data "terraform_remote_state" "cluster" {
 provider "google" {
   project     = data.terraform_remote_state.cluster.outputs.project_id
   region      = data.terraform_remote_state.cluster.outputs.region
-  credentials = file("hc-cc1d107e30744a2085d0ecb8c5b-53d1a4a1d258.json")
 }
 
 data "google_client_config" "default" {}
