@@ -33,4 +33,7 @@ override.tf.json
 terraform.rc
 terraform
 
-hc-cc1d107e30744a2085d0ecb8c5b-53d1a4a1d258.json
+*.json
+.DS_Store
+.terraform*
+*.tfvars
