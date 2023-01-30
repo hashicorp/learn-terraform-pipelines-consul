@@ -1,10 +1,12 @@
 variable "release_name" {
   type        = string
+  default     = "hashicorp-learn"
   description = "Helm Release name for Consul chart"
 }
 
 variable "namespace" {
   type        = string
+  default     = "hashicorp-learn"
   description = "Namespace to deploy the Consul Helm chart"
 }
 
