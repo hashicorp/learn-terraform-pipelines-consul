@@ -1,58 +1,47 @@
 terraform {
-  backend "remote" {
-    organization = "hashicorp-learn"
-
-    workspaces {
-      name = "learn-terraform-pipelines-consul"
-    }
-  }
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.0.2"
+      version = "~> 2.8.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.0.2"
+      version = "~> 2.16.1"
     }
   }
 
-  required_version = "~> 0.14"
+  required_version = ">= 1.1.0"
 }
 
 
 
-data "terraform_remote_state" "cluster" {
-  backend = "remote"
-  config = {
-    organization = var.organization
-    workspaces = {
-      name = var.cluster_workspace
-    }
-  }
+data "tfe_outputs" "cluster" {
+  organization = var.organization
+  workspace    = var.cluster_workspace
 }
+
 
 
 # Retrieve GKE cluster information
 provider "google" {
-  project = data.terraform_remote_state.cluster.outputs.project_id
-  region  = data.terraform_remote_state.cluster.outputs.region
+  project = data.tfe_outputs.cluster.values.project_id
+  region  = data.tfe_outputs.cluster.values.region
 }
 
 data "google_client_config" "default" {}
 
 provider "kubernetes" {
-  host                   = data.terraform_remote_state.cluster.outputs.host
+  host                   = "https://${data.tfe_outputs.cluster.values.host}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
+  cluster_ca_certificate = data.tfe_outputs.cluster.values.cluster_ca_certificate
 
 }
 
 provider "helm" {
   kubernetes {
-    host                   = data.terraform_remote_state.cluster.outputs.host
+    host                   = data.tfe_outputs.cluster.values.host
     token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = data.terraform_remote_state.cluster.outputs.cluster_ca_certificate
+    cluster_ca_certificate = data.tfe_outputs.cluster.values.cluster_ca_certificate
 
   }
 }
