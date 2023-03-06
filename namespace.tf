@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Issue where non-existent namespace does not result in
 # failure behavior.
 # https://github.com/terraform-providers/terraform-provider-helm/issues/427

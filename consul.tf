@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "helm_release" "consul" {
   depends_on = [kubernetes_namespace.secrets]
   name       = "${var.release_name}-consul"
