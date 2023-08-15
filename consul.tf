@@ -1,8 +1,9 @@
 resource "helm_release" "consul" {
   depends_on = [kubernetes_namespace.secrets]
-  name       = "${var.release_name}-consul"
   repository = "https://helm.releases.hashicorp.com"
+  name       = "${var.release_name}-consul"
   chart      = "consul"
+  version    = "1.2.0"
   namespace  = var.namespace
 
   set {
